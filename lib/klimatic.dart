@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
+import 'package:klimatic/seconds_screen.dart';
 import 'constants.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
@@ -18,6 +19,22 @@ class Klimatic extends StatefulWidget {
 class _KlimaticState extends State<Klimatic>  {
 
 
+  String _cityEntered;
+
+  Future _goToNextScreen(BuildContext context) async {
+    Map results = await Navigator
+        .of(context)
+        .push(new MaterialPageRoute<Map>(builder: (BuildContext context) { //change to Map instead of dynamic for this to work
+      return new ChangeCity();
+    }));
+
+    if ( results != null && results.containsKey('enter')) {
+       _cityEntered = results['enter'];
+      // debugPrint("From First screen" + _cityEntered.toString());
+    }
+     
+
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -33,7 +50,9 @@ class _KlimaticState extends State<Klimatic>  {
         IconButton(
            icon: Icon(Icons.menu),
            splashColor: Colors.blueGrey,
-           onPressed: (){fetchData(defaultCity, apiid);},
+           onPressed: (){
+             _goToNextScreen(context);
+           },
         )
        
       ],
@@ -53,7 +72,7 @@ class _KlimaticState extends State<Klimatic>  {
           Container(
             alignment: Alignment.topRight,
             margin: EdgeInsets.only(top: 10.0, right: 12.0),
-            child: Text('Visakhapatnam', style: kCityTextStyle,),
+            child: Text(_cityEntered == null ? defaultCity.toUpperCase() : _cityEntered.toUpperCase(), style: kCityTextStyle,),
           ),
 
           Container(
@@ -65,7 +84,7 @@ class _KlimaticState extends State<Klimatic>  {
           Container(
             alignment: Alignment.bottomLeft,
             margin: EdgeInsets.only(top: 10.0, right: 12.0),
-            child: updateWeatherWidget(defaultCity),
+            child: updateWeatherWidget(_cityEntered == null ? defaultCity : _cityEntered),
           ),
 
 
@@ -102,7 +121,7 @@ builder: (BuildContext context, AsyncSnapshot snapshot){
   if (snapshot.hasData)
   {
     Map content = snapshot.data;
-    print(content['main']['temp'].toString());
+    //print(content['main']['temp'].toString());
     return Container(
       alignment: Alignment.bottomLeft,
       child: Column(

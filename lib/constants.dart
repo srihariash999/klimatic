@@ -22,3 +22,6 @@ const kSmallerTextStyle = TextStyle(
 
 const String apiid = "50daca7ff237d8cff65d5bcc4ed56af5";
 const String defaultCity = "waltair";
+
+String cityName = "waltair";
+
